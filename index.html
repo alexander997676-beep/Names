@@ -3,16 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Big Sun Name Editor</title>
-    <!-- Font Style -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap" rel="stylesheet">
+    <title>Faizan Sun Music Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Rajdhani:wght@600&display=swap" rel="stylesheet">
     
     <style>
-        /* Puri Screen ki Setting */
+        :root {
+            --core-color: #ffcc00;
+            --mid-color: #ff6600;
+            --outer-color: #ff2200;
+            --glow-color: #ff4500;
+        }
+
         body {
             margin: 0;
             height: 100vh;
-            background-color: #000; /* Kala background */
+            background-color: #050505;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -20,54 +25,107 @@
             font-family: 'Orbitron', sans-serif;
         }
 
-        /* Taron wala background */
-        .stars {
+        /* --- BACKGROUND STARS --- */
+        .stars-container {
             position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-image: 
-                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
-                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px);
-            background-size: 550px 550px, 350px 350px;
+            top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
+            background: radial-gradient(circle at center, #111 0%, #000 100%);
+            overflow: hidden;
+        }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite alternate;
+        }
+        @keyframes twinkle { 
+            0% { opacity: 0.3; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.2); }
         }
 
-        /* --- UPAR WALA INPUT BOX --- */
+        /* --- CONTROLS --- */
         .controls {
             z-index: 100;
-            margin-top: 40px; /* Thoda neeche */
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            padding: 20px 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .input-group label {
+            display: block;
+            color: rgba(255, 255, 255, 0.7);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
         }
 
         input {
-            background: rgba(0, 0, 0, 0.7);
-            border: 2px solid #ff4500; /* Orange Border */
-            padding: 15px 30px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--core-color);
+            padding: 10px;
             color: #fff;
-            font-size: 1.2rem;
+            font-size: 1.8rem;
             font-family: 'Orbitron', sans-serif;
-            border-radius: 50px;
-            outline: none;
             text-align: center;
-            width: 300px;
-            box-shadow: 0 0 15px #ff4500;
+            width: 280px;
+            outline: none;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px var(--glow-color);
             transition: 0.3s;
         }
 
-        input:focus {
-            background: #000;
-            box-shadow: 0 0 30px #ff8c00;
-            border-color: #ffd700;
+        /* Music Button Style */
+        .music-btn {
+            background: transparent;
+            border: 1px solid #fff;
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .music-btn:hover {
+            background: #fff;
+            color: #000;
+            box-shadow: 0 0 15px #fff;
         }
 
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
+        /* Color Themes */
+        .color-options { display: flex; gap: 15px; }
+        .color-btn {
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: 0.2s;
         }
+        .color-btn:hover { transform: scale(1.2); border-color: #fff; }
+        
+        .theme-orange { background: linear-gradient(135deg, #ffd700, #ff4500); }
+        .theme-blue { background: linear-gradient(135deg, #00ffff, #0000ff); }
+        .theme-red { background: linear-gradient(135deg, #ff9999, #ff0000); }
+        .theme-purple { background: linear-gradient(135deg, #ff00ff, #800080); }
 
-        /* --- BARA SARA SUN (SURAJ) --- */
+        /* --- SUN DESIGN --- */
         .sun-container {
             flex-grow: 1;
             display: flex;
@@ -75,98 +133,167 @@
             align-items: center;
             width: 100%;
         }
-
-        .sun {
-            /* Size yahan se control ho raha hai */
-            width: 450px;  
-            height: 450px;
-            
-            /* Suraj ka Rang */
-            background: radial-gradient(circle, #ffd700, #ff8c00, #ff4500); 
-            border-radius: 50%;
+        .sun-wrapper {
+            position: relative;
+            width: 420px; height: 420px;
             display: flex;
             justify-content: center;
             align-items: center;
-            
-            /* Chamak (Glow) */
-            box-shadow: 
-                0 0 60px #ff8c00,
-                0 0 120px #ff4500,
-                0 0 200px #ff0000;
-            
-            /* Dhadakne wala animation */
-            animation: sunPulse 3s infinite alternate;
         }
-
-        /* Suraj ke upar likha text */
+        .sun-body {
+            position: absolute;
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--core-color), var(--mid-color), var(--outer-color));
+            box-shadow: 0 0 60px var(--mid-color), 0 0 120px var(--outer-color), inset 0 0 60px var(--core-color);
+            filter: contrast(1.2) brightness(1.2);
+            animation: pulse 4s ease-in-out infinite alternate;
+        }
+        .sun-body::after {
+            content: ""; position: absolute; top: -10%; left: -10%; width: 120%; height: 120%;
+            border-radius: 50%;
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noise"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noise)" opacity="0.3"/%3E%3C/svg%3E');
+            mix-blend-mode: overlay; opacity: 0.6;
+            animation: spinTexture 20s linear infinite;
+        }
         .sun-text {
-            color: #fff;
-            font-size: 3.5rem; /* Text ka size */
-            font-weight: 900;
-            text-transform: uppercase;
-            text-align: center;
-            text-shadow: 3px 3px 6px #000;
-            letter-spacing: 5px;
-            word-break: break-word;
-            padding: 20px;
-            line-height: 1.1;
+            position: relative; z-index: 10;
+            color: #fff; font-size: 3.5rem; font-weight: 900;
+            text-transform: uppercase; text-align: center;
+            letter-spacing: 4px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5), 0 0 20px var(--core-color);
+            max-width: 80%; line-height: 1;
         }
 
-        /* Animation Keyframes */
-        @keyframes sunPulse {
-            0% { transform: scale(1); box-shadow: 0 0 60px #ff8c00, 0 0 100px #ff4500; }
-            100% { transform: scale(1.05); box-shadow: 0 0 100px #ff8c00, 0 0 180px #ff4500, 0 0 250px #ff0000; }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 50px var(--mid-color), 0 0 100px var(--outer-color); }
+            100% { transform: scale(1.03); box-shadow: 0 0 70px var(--mid-color), 0 0 150px var(--outer-color); }
         }
+        @keyframes spinTexture { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Mobile ke liye settings (Taake choti screen par phate nahi) */
         @media (max-width: 768px) {
-            .sun {
-                width: 300px;
-                height: 300px;
-            }
-            .sun-text {
-                font-size: 2rem;
-            }
-            input {
-                width: 80%;
-                font-size: 1rem;
-            }
+            .sun-wrapper { width: 300px; height: 300px; }
+            .sun-text { font-size: 2.2rem; }
+            .controls { width: 85%; }
+            input { width: 100%; }
         }
     </style>
 </head>
 <body>
 
-    <div class="stars"></div>
+    <div class="stars-container" id="starsBg"></div>
 
-    <!-- Input Box Section -->
+    <!-- Hidden Audio Player -->
+    <audio id="bgMusic" loop>
+        <source src="https://n.f-a-k.workers.dev/ytdowncomshortspapa-kahte-hain-song-qayamat-se-qay.m4a" type="audio/mp4">
+    </audio>
+
     <div class="controls">
-        <label style="color: #ff8c00; font-family: sans-serif; font-weight: bold;">TYPE NAME BELOW:</label>
-        <!-- oninput ka matlab: jaise likhoge foran neeche change hoga -->
-        <input type="text" id="nameInput" placeholder="Apna Naam Likhein..." oninput="updateName()">
+        <div class="input-group">
+            <label>Name Editor</label>
+            <input type="text" id="nameInput" value="FAIZAN" oninput="updateName()" autocomplete="off">
+        </div>
+        
+        <!-- Music Control Button -->
+        <button class="music-btn" onclick="toggleMusic()" id="musicBtn">
+            ▶ Play Music
+        </button>
+
+        <div class="color-options">
+            <div class="color-btn theme-orange" onclick="setTheme('orange')"></div>
+            <div class="color-btn theme-blue" onclick="setTheme('blue')"></div>
+            <div class="color-btn theme-red" onclick="setTheme('red')"></div>
+            <div class="color-btn theme-purple" onclick="setTheme('purple')"></div>
+        </div>
     </div>
 
-    <!-- Big Sun Section -->
     <div class="sun-container">
-        <div class="sun">
-            <span class="sun-text" id="sunText"></span>
+        <div class="sun-wrapper">
+            <div class="sun-body"></div>
+            <span class="sun-text" id="sunText">FAIZAN</span>
         </div>
     </div>
 
     <script>
-        function updateName() {
-            // Box se value uthao
-            var inputValue = document.getElementById('nameInput').value;
-            // Suraj ke text ko pakdo
-            var displayVal = document.getElementById('sunText');
+        // --- 1. Audio Logic ---
+        var audio = document.getElementById("bgMusic");
+        var btn = document.getElementById("musicBtn");
 
-            // Agar box khali ho, to Suraj bhi khali rahe (ya default text dikhaye)
-            if (inputValue === "") {
-                displayVal.innerText = ""; // Khali
+        function toggleMusic() {
+            if (audio.paused) {
+                audio.play();
+                btn.innerHTML = "⏸ Pause Music";
             } else {
-                displayVal.innerText = inputValue;
+                audio.pause();
+                btn.innerHTML = "▶ Play Music";
+            }
+        }
+
+        // Koshish karein ki load hote hi chal jaye (Browser allow kare to)
+        window.onload = function() {
+            createStars(); // Stars banao
+            audio.volume = 1.0; // Full volume
+            var playPromise = audio.play();
+
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    // Chal gaya!
+                    btn.innerHTML = "⏸ Pause Music";
+                })
+                .catch(error => {
+                    // Browser ne rok diya, user ko button dabana padega
+                    console.log("Autoplay prevented, waiting for user click.");
+                });
+            }
+        };
+
+        // --- 2. Name Logic ---
+        function updateName() {
+            var val = document.getElementById('nameInput').value;
+            document.getElementById('sunText').innerText = val === "" ? " " : val;
+        }
+
+        // --- 3. Theme Logic ---
+        function setTheme(color) {
+            const root = document.documentElement;
+            if(color === 'orange') {
+                root.style.setProperty('--core-color', '#ffcc00');
+                root.style.setProperty('--mid-color', '#ff6600');
+                root.style.setProperty('--outer-color', '#ff2200');
+                root.style.setProperty('--glow-color', '#ff4500');
+            } else if(color === 'blue') {
+                root.style.setProperty('--core-color', '#e0ffff');
+                root.style.setProperty('--mid-color', '#00ffff');
+                root.style.setProperty('--outer-color', '#0000ff');
+                root.style.setProperty('--glow-color', '#00bfff');
+            } else if(color === 'red') {
+                root.style.setProperty('--core-color', '#ffcccc');
+                root.style.setProperty('--mid-color', '#ff0000');
+                root.style.setProperty('--outer-color', '#8b0000');
+                root.style.setProperty('--glow-color', '#ff0000');
+            } else if(color === 'purple') {
+                root.style.setProperty('--core-color', '#ffccff');
+                root.style.setProperty('--mid-color', '#ff00ff');
+                root.style.setProperty('--outer-color', '#800080');
+                root.style.setProperty('--glow-color', '#da70d6');
+            }
+        }
+
+        // --- 4. Star Background Logic ---
+        function createStars() {
+            const container = document.getElementById('starsBg');
+            for(let i=0; i<100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                const size = Math.random() * 2 + 1;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                container.appendChild(star);
             }
         }
     </script>
-
 </body>
 </html>
