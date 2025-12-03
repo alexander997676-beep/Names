@@ -3,296 +3,339 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faizan Sun Music Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Rajdhani:wght@600&display=swap" rel="stylesheet">
+    <title>Cosmic Sun Editor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Exo+2:wght@600&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --core-color: #ffcc00;
-            --mid-color: #ff6600;
-            --outer-color: #ff2200;
-            --glow-color: #ff4500;
+            /* Default Theme: Golden Fire */
+            --core: #ffaa00;
+            --mid: #ff5500;
+            --outer: #ff0000;
+            --glow: rgba(255, 69, 0, 0.6);
+            --ring: rgba(255, 140, 0, 0.8);
         }
 
         body {
             margin: 0;
             height: 100vh;
-            background-color: #050505;
+            background: #000;
             display: flex;
             flex-direction: column;
             align-items: center;
             overflow: hidden;
             font-family: 'Orbitron', sans-serif;
+            color: white;
         }
 
-        /* --- BACKGROUND STARS --- */
-        .stars-container {
+        /* --- SPACE BACKGROUND (WARP SPEED) --- */
+        .space {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            background: radial-gradient(circle at center, #111 0%, #000 100%);
-            overflow: hidden;
+            z-index: -2;
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+            perspective: 500px;
         }
         .star {
             position: absolute;
             background: white;
             border-radius: 50%;
-            animation: twinkle var(--duration) infinite alternate;
+            transform: translateZ(0);
+            animation: warp linear infinite;
         }
-        @keyframes twinkle { 
-            0% { opacity: 0.3; transform: scale(0.8); }
-            100% { opacity: 1; transform: scale(1.2); }
+        @keyframes warp {
+            from { transform: translateZ(0) translateY(0); opacity: 0; }
+            to { transform: translateZ(400px) translateY(-100px); opacity: 1; }
         }
 
-        /* --- CONTROLS --- */
-        .controls {
+        /* --- CONTROL PANEL (HUD) --- */
+        .hud-container {
             z-index: 100;
             margin-top: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            padding: 20px 30px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px);
+            padding: 15px 30px;
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.5s;
         }
 
-        .input-group label {
-            display: block;
-            color: rgba(255, 255, 255, 0.7);
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 0.9rem;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-align: center;
+        .hud-hidden {
+            transform: translateY(-200%);
+            opacity: 0;
         }
 
-        input {
+        .input-box {
             background: transparent;
             border: none;
-            border-bottom: 2px solid var(--core-color);
+            border-bottom: 2px solid var(--mid);
             padding: 10px;
             color: #fff;
-            font-size: 1.8rem;
+            font-size: 2rem;
             font-family: 'Orbitron', sans-serif;
             text-align: center;
-            width: 280px;
+            width: 300px;
             outline: none;
             text-transform: uppercase;
-            text-shadow: 0 0 10px var(--glow-color);
-            transition: 0.3s;
+            text-shadow: 0 0 10px var(--core);
+            letter-spacing: 2px;
         }
 
-        /* Music Button Style */
-        .music-btn {
-            background: transparent;
-            border: 1px solid #fff;
-            color: #fff;
-            padding: 8px 20px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: bold;
-            letter-spacing: 1px;
-            transition: 0.3s;
+        /* Audio Controls */
+        .audio-controls {
             display: flex;
             align-items: center;
-            gap: 5px;
-        }
-        .music-btn:hover {
-            background: #fff;
-            color: #000;
-            box-shadow: 0 0 15px #fff;
+            gap: 15px;
+            background: rgba(255,255,255,0.05);
+            padding: 8px 15px;
+            border-radius: 30px;
         }
 
-        /* Color Themes */
-        .color-options { display: flex; gap: 15px; }
-        .color-btn {
-            width: 30px; height: 30px;
-            border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.3);
+        button {
+            background: var(--mid);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
             cursor: pointer;
-            transition: 0.2s;
+            font-weight: bold;
+            font-family: 'Exo 2', sans-serif;
+            transition: 0.3s;
         }
-        .color-btn:hover { transform: scale(1.2); border-color: #fff; }
-        
-        .theme-orange { background: linear-gradient(135deg, #ffd700, #ff4500); }
-        .theme-blue { background: linear-gradient(135deg, #00ffff, #0000ff); }
-        .theme-red { background: linear-gradient(135deg, #ff9999, #ff0000); }
-        .theme-purple { background: linear-gradient(135deg, #ff00ff, #800080); }
+        button:hover { background: var(--core); box-shadow: 0 0 15px var(--mid); }
 
-        /* --- SUN DESIGN --- */
-        .sun-container {
+        input[type="range"] {
+            width: 80px;
+            accent-color: var(--core);
+        }
+
+        /* Theme Dots */
+        .themes { display: flex; gap: 10px; margin-top: 5px; }
+        .theme-dot { width: 25px; height: 25px; border-radius: 50%; cursor: pointer; border: 2px solid rgba(255,255,255,0.3); transition: 0.3s; }
+        .theme-dot:hover { transform: scale(1.2); border-color: white; }
+
+        /* --- THE SUN SYSTEM --- */
+        .system {
             flex-grow: 1;
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
             width: 100%;
         }
-        .sun-wrapper {
-            position: relative;
-            width: 420px; height: 420px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .sun-body {
+
+        /* VISUALIZER RING */
+        .visualizer-ring {
             position: absolute;
+            width: 500px; height: 500px;
+            border-radius: 50%;
+            border: 2px solid var(--ring);
+            box-shadow: 0 0 30px var(--ring);
+            opacity: 0.3;
+            transform: scale(0.9);
+            transition: 0.1s;
+        }
+        /* Class added via JS when music plays */
+        .beating { animation: beat 0.8s infinite alternate; }
+
+        @keyframes beat {
+            0% { transform: scale(1); opacity: 0.3; border-width: 2px; }
+            100% { transform: scale(1.15); opacity: 0.8; border-width: 5px; }
+        }
+
+        /* MAIN SUN */
+        .sun {
+            position: relative;
+            width: 450px; height: 450px;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        /* Core */
+        .sun::before {
+            content: ''; position: absolute;
             width: 100%; height: 100%;
             border-radius: 50%;
-            background: radial-gradient(circle, var(--core-color), var(--mid-color), var(--outer-color));
-            box-shadow: 0 0 60px var(--mid-color), 0 0 120px var(--outer-color), inset 0 0 60px var(--core-color);
-            filter: contrast(1.2) brightness(1.2);
-            animation: pulse 4s ease-in-out infinite alternate;
+            background: radial-gradient(circle, var(--core), var(--mid));
+            box-shadow: 0 0 80px var(--mid), 0 0 150px var(--outer);
+            animation: pulse 4s infinite alternate;
         }
-        .sun-body::after {
-            content: ""; position: absolute; top: -10%; left: -10%; width: 120%; height: 120%;
+
+        /* Rotating Flares (Atmosphere) */
+        .sun::after {
+            content: ''; position: absolute;
+            top: -10px; left: -10px; right: -10px; bottom: -10px;
             border-radius: 50%;
-            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noise"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noise)" opacity="0.3"/%3E%3C/svg%3E');
-            mix-blend-mode: overlay; opacity: 0.6;
-            animation: spinTexture 20s linear infinite;
+            background: transparent;
+            box-shadow: inset 0 0 50px var(--outer);
+            border: 10px solid transparent;
+            border-top-color: var(--ring);
+            border-bottom-color: var(--ring);
+            opacity: 0.5;
+            filter: blur(20px);
+            animation: spin 10s linear infinite;
         }
+
+        /* Text inside Sun */
         .sun-text {
-            position: relative; z-index: 10;
-            color: #fff; font-size: 3.5rem; font-weight: 900;
-            text-transform: uppercase; text-align: center;
-            letter-spacing: 4px;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.5), 0 0 20px var(--core-color);
-            max-width: 80%; line-height: 1;
+            z-index: 10;
+            font-size: 3.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-shadow: 0 2px 0 #000, 0 0 20px rgba(255,255,255,0.8);
+            text-align: center;
+            line-height: 1;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 50px var(--mid-color), 0 0 100px var(--outer-color); }
-            100% { transform: scale(1.03); box-shadow: 0 0 70px var(--mid-color), 0 0 150px var(--outer-color); }
+        /* Cinematic Button (Bottom Right) */
+        .cine-btn {
+            position: absolute;
+            bottom: 20px; right: 20px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            z-index: 200;
+            font-size: 0.8rem;
         }
-        @keyframes spinTexture { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+        /* Animations */
+        @keyframes pulse { 0% { transform: scale(0.98); } 100% { transform: scale(1.02); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Mobile */
         @media (max-width: 768px) {
-            .sun-wrapper { width: 300px; height: 300px; }
-            .sun-text { font-size: 2.2rem; }
-            .controls { width: 85%; }
-            input { width: 100%; }
+            .sun, .visualizer-ring { width: 300px; height: 300px; }
+            .sun-text { font-size: 2rem; }
+            .hud-container { width: 85%; padding: 15px; }
+            .input-box { width: 100%; }
+            .audio-controls { width: 100%; justify-content: center; }
         }
     </style>
 </head>
 <body>
 
-    <div class="stars-container" id="starsBg"></div>
+    <!-- Space Background -->
+    <div class="space" id="space"></div>
 
-    <!-- Hidden Audio Player -->
+    <!-- Audio Player -->
     <audio id="bgMusic" loop>
         <source src="https://n.f-a-k.workers.dev/ytdowncomshortspapa-kahte-hain-song-qayamat-se-qay.m4a" type="audio/mp4">
     </audio>
 
-    <div class="controls">
-        <div class="input-group">
-            <label>Name Editor</label>
-            <input type="text" id="nameInput" value="FAIZAN" oninput="updateName()" autocomplete="off">
-        </div>
+    <!-- Controls (HUD) -->
+    <div class="hud-container" id="hud">
+        <input type="text" class="input-box" id="nameInput" value="FAIZAN" oninput="updateName()" placeholder="ENTER NAME">
         
-        <!-- Music Control Button -->
-        <button class="music-btn" onclick="toggleMusic()" id="musicBtn">
-            ▶ Play Music
-        </button>
+        <div class="audio-controls">
+            <button onclick="toggleMusic()" id="playBtn">▶ PLAY MUSIC</button>
+            <span style="font-size:0.8rem">VOL:</span>
+            <input type="range" min="0" max="1" step="0.1" value="1" oninput="setVolume(this.value)">
+        </div>
 
-        <div class="color-options">
-            <div class="color-btn theme-orange" onclick="setTheme('orange')"></div>
-            <div class="color-btn theme-blue" onclick="setTheme('blue')"></div>
-            <div class="color-btn theme-red" onclick="setTheme('red')"></div>
-            <div class="color-btn theme-purple" onclick="setTheme('purple')"></div>
+        <div class="themes">
+            <!-- Orange (Default) -->
+            <div class="theme-dot" style="background: #ffaa00;" onclick="setTheme('#ffaa00','#ff5500','#ff0000')"></div>
+            <!-- Blue -->
+            <div class="theme-dot" style="background: #00ffff;" onclick="setTheme('#ccffff','#00ccff','#0000ff')"></div>
+            <!-- Purple -->
+            <div class="theme-dot" style="background: #ff00ff;" onclick="setTheme('#ffccff','#ff00ff','#800080')"></div>
+            <!-- Green (Toxic) -->
+            <div class="theme-dot" style="background: #00ff00;" onclick="setTheme('#ccffcc','#00ff00','#006400')"></div>
         </div>
     </div>
 
-    <div class="sun-container">
-        <div class="sun-wrapper">
-            <div class="sun-body"></div>
+    <!-- The Sun System -->
+    <div class="system">
+        <div class="visualizer-ring" id="visualizer"></div>
+        <div class="sun">
             <span class="sun-text" id="sunText">FAIZAN</span>
         </div>
     </div>
 
+    <!-- Toggle View Button -->
+    <button class="cine-btn" onclick="toggleHUD()">👁 Hide/Show Controls</button>
+
     <script>
-        // --- 1. Audio Logic ---
-        var audio = document.getElementById("bgMusic");
-        var btn = document.getElementById("musicBtn");
+        // --- 1. SETUP & BACKGROUND ---
+        function createStars() {
+            const space = document.getElementById('space');
+            for(let i=0; i<80; i++) {
+                let star = document.createElement('div');
+                star.className = 'star';
+                // Random position
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                // Random size
+                let size = Math.random() * 3;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                // Random speed
+                star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                space.appendChild(star);
+            }
+        }
+        createStars();
+
+        // --- 2. MUSIC & VISUALIZER ---
+        const audio = document.getElementById('bgMusic');
+        const playBtn = document.getElementById('playBtn');
+        const visualizer = document.getElementById('visualizer');
 
         function toggleMusic() {
             if (audio.paused) {
                 audio.play();
-                btn.innerHTML = "⏸ Pause Music";
+                playBtn.innerHTML = "⏸ PAUSE";
+                playBtn.style.background = "#ff0000";
+                visualizer.classList.add('beating'); // Start animation
             } else {
                 audio.pause();
-                btn.innerHTML = "▶ Play Music";
+                playBtn.innerHTML = "▶ PLAY MUSIC";
+                playBtn.style.background = ""; // Reset color
+                visualizer.classList.remove('beating'); // Stop animation
             }
         }
 
-        // Koshish karein ki load hote hi chal jaye (Browser allow kare to)
-        window.onload = function() {
-            createStars(); // Stars banao
-            audio.volume = 1.0; // Full volume
-            var playPromise = audio.play();
+        function setVolume(val) {
+            audio.volume = val;
+        }
 
-            if (playPromise !== undefined) {
-                playPromise.then(_ => {
-                    // Chal gaya!
-                    btn.innerHTML = "⏸ Pause Music";
-                })
-                .catch(error => {
-                    // Browser ne rok diya, user ko button dabana padega
-                    console.log("Autoplay prevented, waiting for user click.");
+        // Try Autoplay
+        window.onload = function() {
+            let attempt = audio.play();
+            if (attempt !== undefined) {
+                attempt.then(() => {
+                    playBtn.innerHTML = "⏸ PAUSE";
+                    visualizer.classList.add('beating');
+                }).catch(() => {
+                    console.log("Autoplay blocked. Click play.");
                 });
             }
-        };
+        }
 
-        // --- 2. Name Logic ---
+        // --- 3. NAME EDITOR ---
         function updateName() {
-            var val = document.getElementById('nameInput').value;
+            const val = document.getElementById('nameInput').value;
             document.getElementById('sunText').innerText = val === "" ? " " : val;
         }
 
-        // --- 3. Theme Logic ---
-        function setTheme(color) {
-            const root = document.documentElement;
-            if(color === 'orange') {
-                root.style.setProperty('--core-color', '#ffcc00');
-                root.style.setProperty('--mid-color', '#ff6600');
-                root.style.setProperty('--outer-color', '#ff2200');
-                root.style.setProperty('--glow-color', '#ff4500');
-            } else if(color === 'blue') {
-                root.style.setProperty('--core-color', '#e0ffff');
-                root.style.setProperty('--mid-color', '#00ffff');
-                root.style.setProperty('--outer-color', '#0000ff');
-                root.style.setProperty('--glow-color', '#00bfff');
-            } else if(color === 'red') {
-                root.style.setProperty('--core-color', '#ffcccc');
-                root.style.setProperty('--mid-color', '#ff0000');
-                root.style.setProperty('--outer-color', '#8b0000');
-                root.style.setProperty('--glow-color', '#ff0000');
-            } else if(color === 'purple') {
-                root.style.setProperty('--core-color', '#ffccff');
-                root.style.setProperty('--mid-color', '#ff00ff');
-                root.style.setProperty('--outer-color', '#800080');
-                root.style.setProperty('--glow-color', '#da70d6');
-            }
+        // --- 4. THEMES ---
+        function setTheme(core, mid, outer) {
+            const r = document.documentElement.style;
+            r.setProperty('--core', core);
+            r.setProperty('--mid', mid);
+            r.setProperty('--outer', outer);
+            r.setProperty('--glow', mid); // Simplified glow logic
+            r.setProperty('--ring', mid);
         }
 
-        // --- 4. Star Background Logic ---
-        function createStars() {
-            const container = document.getElementById('starsBg');
-            for(let i=0; i<100; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                const size = Math.random() * 2 + 1;
-                star.style.width = size + 'px';
-                star.style.height = size + 'px';
-                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
-                container.appendChild(star);
-            }
+        // --- 5. CINEMATIC MODE ---
+        function toggleHUD() {
+            const hud = document.getElementById('hud');
+            hud.classList.toggle('hud-hidden');
         }
     </script>
 </body>
